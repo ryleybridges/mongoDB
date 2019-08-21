@@ -33,16 +33,22 @@ app.get('/product/delete/:id', function(req, res){
   let filteredData = [];
   for (var i = 0; i < allProducts.length; i++) {
         if(allProducts[i].id.toString() === productID){
-            productID.splice(allProducts[i]);
-            console.log(productID);
+            filteredData.push(allProducts[i]);
         }
     }
     res.send(filteredData);
 });
 
-// app.get('/product/edit/:id', function(req, res){
-//
-// });
+app.get('/product/edit/:id', function(req, res){
+  const productID = req.params.id;
+  let filteredData = [];
+  for (var i = 0; i < allProducts.length; i++) {
+        if(allProducts[i].id.toString() === productID){
+            filteredData.push(allProducts[i]);
+        }
+    }
+    res.send(filteredData);
+});
 
 app.listen(port, () => {
     console.clear();
