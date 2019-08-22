@@ -6,7 +6,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 const config = require('./config.json');
-mongoose.connect(`mongodb+srv://ryleyb:${config.MONGO_PASSWORD}@ryleyscluster-jy7ku.mongodb.net/test?retryWrites=true&w=majority`, {useNewUrlParser: true});
+mongoose.connect(`mongodb+srv://ryleyb:${config.MONGO_PASSWORD}@ryleyscluster-jy7ku.mongodb.net/shop?retryWrites=true&w=majority`, {useNewUrlParser: true});
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -44,16 +44,27 @@ app.get('/product/:id', function(req, res){
     }
 });
 
+const Product = require('./models/products');
+
 app.post('/product', function(req, res){
   // console.log('a post request has been made');
   // console.log(req.body);
-  let product = {
+  // let product = {
+  //   name: req.body.name,
+  //   price: req.body.price,
+  //   message: 'We are about to send this product to a database'
+  // }
+  // res.send(product);
+  const product = new Product({
+    _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
-    price: req.body.price,
-    message: 'We are about to send this product to a database'
-  }
-  res.send(product);
-})
+    price: req.body.price
+  });
+  product.save().then(result => {
+    res.send(result);
+  })
+  .catch(err => res.send(err));
+});
 
 // app.get('/product/delete/:id', function(req, res){
 //   const productID = req.params.id;
