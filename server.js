@@ -3,6 +3,17 @@ const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const mongoose = require('mongoose');
+
+const config = require('./config.json');
+mongoose.connect(`mongodb+srv://ryleyb:${config.MONGO_PASSWORD}@ryleyscluster-jy7ku.mongodb.net/test?retryWrites=true&w=majority`, {useNewUrlParser: true});
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  // we're connected!
+  console.log('we are connected to mongodb');
+});
 
 const allProducts = require('./data/products');
 
@@ -67,6 +78,6 @@ app.post('/product', function(req, res){
 // });
 
 app.listen(port, () => {
-    console.clear();
+    // console.clear();
     console.log(`application is running on port ${port}`);
 });
