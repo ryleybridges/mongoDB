@@ -7,7 +7,9 @@ const mongoose = require('mongoose');
 
 const config = require('./config.json');
 
-mongoose.connect(`mongodb+srv://${config.MONGO_USER}:${config.MONGO_PASSWORD}@cluster0-zd20o.mongodb.net/shop?retryWrites=true&w=majority`, {useNewUrlParser: true});
+const Product = require('./models/products');
+
+mongoose.connect(`mongodb+srv://${config.MONGO_USER}:${config.MONGO_PASSWORD}@ryleyscluster-jy7ku.mongodb.net/test?retryWrites=true&w=majority`, {useNewUrlParser: true});
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -32,22 +34,19 @@ app.get('/', function(req, res){
 });
 
 app.get('/allProducts', function(req, res){
-    res.send(allProducts);
-})
+    // res.send(allProducts);
+    Product.find().then(result => {
+      res.send(result);
+    });
+});
 
 
 app.get('/product/:id', function(req, res){
     const id = req.params.id
-    for (var i = 0; i < allProducts.length; i++) {
-        if(id == allProducts[i].id){
-            res.send(allProducts[i]);
-            break;
-        }
-    }
-})
-
-
-const Product = require('./models/products');
+    Product.findById(id).then(result => {
+        res.send(result);
+    });
+});
 
 app.post('/product', function(req, res){
     // console.log('a post request has been made');
@@ -70,7 +69,6 @@ app.post('/product', function(req, res){
 });
 
 const Contact = require('./models/contact');
-
 app.post('/contact', function(req, res){
   const contact = new Contact({
     _id: new mongoose.Types.ObjectId(),
@@ -79,4 +77,13 @@ app.post('/contact', function(req, res){
     subject: String,
     message: String
   });
+
+  contact.save().then(result => {
+      res.send(result);
+  }).catch(err => res.send(err));
+});
+
+app.listen(port, () => {
+  console.clear();
+  console.log(`application is running on port ${port}`)
 });
