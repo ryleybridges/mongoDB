@@ -68,3 +68,15 @@ app.post('/product', function(req, res){
         res.send(result);
     }).catch(err => res.send(err));
 });
+
+const Contact = require('./models/contact');
+
+app.post('/contact', function(req, res){
+  const contact = new Contact({
+    _id: new mongoose.Types.ObjectId(),
+    name: String,
+    email: String,
+    subject: String,
+    message: String
+  });
+});
