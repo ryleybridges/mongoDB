@@ -68,6 +68,14 @@ app.post('/product', function(req, res){
     }).catch(err => res.send(err));
 });
 
+app.patch('/editProduct/:id', function(req, res){
+  const id = req.params.id;
+  Product.updateOne({_id : id}, {name : req.body.name, price: req.body.price}).then(result => {
+    console.log(result);
+    res.send(result);
+  }).catch(err => res.send(err));
+});
+
 const Contact = require('./models/contact');
 app.post('/contact', function(req, res){
   const contact = new Contact({
