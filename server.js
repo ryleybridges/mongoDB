@@ -75,11 +75,11 @@ app.patch('/editProduct/:id', function(req, res){
   }).catch(err => res.send(err));
 });
 
-app.patch('/deleteProduct/:id', function(req, res){
+app.delete('/products/:id', function(req, res){
   const id = req.params.id;
-  Product.deleteOne({_id : id}, {name : req.body.name, price: req.body.price}).then(result => {
-    res.send(result);
-  }).catch(err => res.send(err));
+  Product.deleteOne({_id : id}, function (err) {
+    res.send('deleted');
+  });
 });
 
 const Contact = require('./models/contact');
