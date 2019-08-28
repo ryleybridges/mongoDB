@@ -4,6 +4,7 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const config = require('./config.json');
 
@@ -95,6 +96,33 @@ app.post('/contact', function(req, res){
   contact.save().then(result => {
       res.send(result);
   }).catch(err => res.send(err));
+});
+
+const Users = require('./models/users');
+
+app.post('/users', function(req, res){
+  const hash = bcrypt.hashSync(req.body.password);
+
+  const newUser = new Users({
+    _id: new mongoose.Types.ObjectId(),
+    username: req.body.username,
+    email: req.body.email,
+    password: hash
+  });
+
+  newUser.save().then(result => {
+      res.send(result);
+  }).catch(err => res.send(err));
+
+  // res.send('added to database');
+});
+
+app.post('/getUser', function(req, res){
+  // if(bcrypt.compareSync('password', hash)){
+  //   console.log('password matches')
+  // }else {
+  //   console.log('password does not match');
+  // }
 });
 
 app.listen(port, () => {
