@@ -89,6 +89,6 @@ app.post('/product', function(req, res){
 // });
 
 app.listen(port, () => {
-    // console.clear();
+    console.clear();
     console.log(`application is running on port ${port}`);
 });
