@@ -103,6 +103,10 @@ const Users = require('./models/users');
 app.post('/users', function(req, res){
   const hash = bcrypt.hashSync(req.body.password);
 
+  Users.findOne({ type: req.body.username }, function(err, users) {
+    console.log('username already exists');
+  });
+
   const newUser = new Users({
     _id: new mongoose.Types.ObjectId(),
     username: req.body.username,
