@@ -101,32 +101,41 @@ app.post('/contact', function(req, res){
 const Users = require('./models/users');
 
 app.post('/users', function(req, res){
-  const hash = bcrypt.hashSync(req.body.password);
+  Users.findOne({ username : req.body.username }, function (err, checkUser) {
+    if(checkUser){
+      console.log('username already exists');
+    }else{
+      const hash = bcrypt.hashSync(req.body.password);
+      const user = new Users({
+        _id: new mongoose.Types.ObjectId(),
+        username: req.body.username,
+        email: req.body.email,
+        password: hash
+      });
 
-  Users.findOne({ type: req.body.username }, function(err, users) {
-    console.log('username already exists');
+      user.save().then(result => {
+          res.send(result);
+      }).catch(err => res.send(err));
+    }
   });
 
-  const newUser = new Users({
-    _id: new mongoose.Types.ObjectId(),
-    username: req.body.username,
-    email: req.body.email,
-    password: hash
-  });
-
-  newUser.save().then(result => {
-      res.send(result);
-  }).catch(err => res.send(err));
-
-  // res.send('added to database');
 });
 
 app.post('/getUser', function(req, res){
-  // if(bcrypt.compareSync('password', hash)){
-  //   console.log('password matches')
-  // }else {
-  //   console.log('password does not match');
-  // }
+
+  Users.findOne({ username : req.body.username }, function(err, checkUser){
+    if(checkUser){
+      if(bcrypt.compareSync(req.body.password, checkUser.password)){
+        console.log('password matches');
+        res.send(checkUser);
+      }else {
+        console.log('password does not match');
+        res.send('invalid password');
+      }
+    }else {
+      res.send('invalid user');
+    }
+  });
 });
 
 app.listen(port, () => {
