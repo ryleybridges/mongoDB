@@ -104,7 +104,7 @@ app.post('/users', function(req, res){
   const hash = bcrypt.hashSync(req.body.password);
 
   Users.findOne({ type: req.body.username }, function(err, users) {
-    
+    console.log('username already exists');
   });
 
   const newUser = new Users({
