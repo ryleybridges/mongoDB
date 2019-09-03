@@ -42,26 +42,23 @@ app.get('/allProducts', function(req, res){
 });
 
 
-app.get('/product/:id', function(req, res){
+app.post('/product/:id', function(req, res){
     const id = req.params.id
-    Product.findById(id).then(result => {
-        res.send(result);
+    Product.findById(id, function(err, product){
+      if(product['user_id'] == req.body.userId){
+        res.send(product);
+      }else {
+        res.send('401');
+      }
     });
 });
 
 app.post('/product', function(req, res){
-    // console.log('a post request has been made');
-    // console.log(req.body);
-    // let product = {
-    //     name: req.body.name,
-    //     price: req.body.price,
-    //     message: 'We are about to send this product to a database'
-    // };
-    // res.send(product);
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
-        price: req.body.price
+        price: req.body.price,
+        user_id: req.body.userId
     });
 
     product.save().then(result => {
@@ -71,9 +68,18 @@ app.post('/product', function(req, res){
 
 app.patch('/editProduct/:id', function(req, res){
   const id = req.params.id;
-  Product.updateOne({_id : id}, {name : req.body.name, price: req.body.price}).then(result => {
-    res.send(result);
-  }).catch(err => res.send(err));
+  Product.findById(id, function(err, product){
+    if(product['user_id'] == req.body.userId){
+      const newProduct = {
+        name: req.body.name,
+        price: req.body.price
+      };
+      Product.updateOne({_id : id}, {name : req.body.name, price: req.body.price}).then(result => {
+        res.send(result);
+      }).catch(err => res.send(err));
+    }
+  }).catch(err => res.send('cannot find product with that id'));
+
 });
 
 app.delete('/products/:id', function(req, res){
